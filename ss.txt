@@ -1,0 +1,22 @@
+{
+  filters: [ 'pump' ],
+  account: undefined,
+  slot: undefined,
+  transaction: {
+    transaction: {
+      signature: <Buffer 37 77 67 29 39 c8 4b ae 63 c9 32 89 c8 51 fd a7 3c 76 9b c2 ba 42 1a 97 91 d3 53 87 89 da ad 33 0b 39 7a f6 d3 c0 3d 1e a5 7e 20 28 ad fb 9c 39 df 93 ... 14 more bytes>,
+      isVote: false,
+      transaction: [Object],
+      meta: [Object],
+      index: '1013'
+    },
+    slot: '371582661'
+  },
+  transactionStatus: undefined,
+  block: undefined,
+  ping: undefined,
+  pong: undefined,
+  blockMeta: undefined,
+  entry: undefined,
+  createdAt: 2025-10-06T13:42:55.401Z
+}
