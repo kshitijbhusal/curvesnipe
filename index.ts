@@ -1,3 +1,4 @@
+import { PublicKey } from "@solana/web3.js";
 import Client, { SubscribeRequest, SubscribeUpdate } from "@triton-one/yellowstone-grpc";
 import bs58 from 'bs58';
 import dotenv from 'dotenv'
@@ -48,7 +49,10 @@ async function main() {
     strem.on("data", async (data: SubscribeUpdate) => {
 
         const transaction = data.transaction?.transaction;
-        const message = transaction?.transaction?.message;
+        const message = transaction?.transaction?.message!
+
+
+       
 
 
         if (!transaction || !message) return;
@@ -60,10 +64,24 @@ async function main() {
         if (!createInstruction) return;
 
 
+         const accountKeys = message.accountKeys 
+        const accounts= createInstruction.accounts!;
+
         console.log('createInstruction found' , createInstruction);
-        console.log('createInstruction found' , bs58.encode(createInstruction.accounts));
-        console.log('createInstruction found' , bs58.encode(createInstruction.data));
-        console.log("---".repeat(20));
+
+        const mint = new PublicKey(accountKeys[accounts[0]]).toBase58();
+        const bonding_curve = new PublicKey(accountKeys[accounts[2]]).toBase58();
+        const associated_bonding_curve = new PublicKey(accountKeys[accounts[3]]).toBase58();
+         const user = new PublicKey(accountKeys[accounts[7]]).toBase58();
+
+
+         console.log('mint is', mint);
+
+         console.log('bc  is', bonding_curve);
+
+         console.log('user is', user);
+         
+         console.log("---".repeat(20));
         
         
 
