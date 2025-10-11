@@ -1,7 +1,11 @@
-import { PublicKey } from "@solana/web3.js";
+
 import Client, { SubscribeRequest, SubscribeUpdate } from "@triton-one/yellowstone-grpc";
 import bs58 from 'bs58';
 import dotenv from 'dotenv'
+import fetch from "node-fetch";
+
+import { Connection, PublicKey } from "@solana/web3.js";
+import axios from "axios";
 
 dotenv.config();
 
@@ -69,49 +73,53 @@ async function main() {
             ix.data && CREATE_POOL_DISCRIMINATOR.equals(ix.data.slice(0, 8))
         )
 
-        if (!createPoolInstruction) return;
+        if (!createPoolInstruction) return null;
         // console.log(message);
 
 
-        
+
         const accountKeys = message.accountKeys;
         const accounts = createPoolInstruction.accounts!;
-        console.log('ins is ----------------------', createPoolInstruction);
 
-        // Typically, for a pool creation instruction, the base and quote token mints are among the first accounts.
-        // Adjust indices if your instruction layout is different.
-        const baseTokenAddress = new PublicKey(accountKeys[accounts[0]]).toBase58();
-        const quoteTokenAddress = new PublicKey(accountKeys[accounts[1]]).toBase58();
+        let pairIndex;
 
-        console.log('Base Token Address:', baseTokenAddress);
-        console.log('Quote Token Address:', quoteTokenAddress);
+        const findpair = accountKeys.map((account, index) => {
 
+            if (bs58.encode(account) === 'pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA') {
+                pairIndex = index + 1
+            } else {
+                return;
+            }
+        });
 
-        // const createInstruction = message.instructions.find(ix =>
-        //     ix.data && CREATE_DISCRIMINATOR.equals(ix.data.slice(0, 8))
-        // );
+        if(!findpair) return;
 
-        // if (!createInstruction) return;
-
-
-        //  const accountKeys = message.accountKeys 
-        // const accounts= createInstruction.accounts!;
-
-        // console.log('createInstruction found' , createInstruction);
-
-        // const mint = new PublicKey(accountKeys[accounts[0]]).toBase58();
-        // const bonding_curve = new PublicKey(accountKeys[accounts[2]]).toBase58();
-        // const associated_bonding_curve = new PublicKey(accountKeys[accounts[3]]).toBase58();
-        //  const user = new PublicKey(accountKeys[accounts[7]]).toBase58();
+        const pairAccount = bs58.encode(accountKeys[pairIndex])
 
 
-        //  console.log('mint is', mint);
+        console.log('hello');
 
-        //  console.log('bc  is', bonding_curve);
+        const url = `https://api-v2.solscan.io/v2/account?address=${pairAccount}`;
+        console.log("Fetching:", url);
 
-        //  console.log('user is', user);
+        const response = await axios.get(url, {
+            headers: {
+                accept: "application/json",
+                origin: "https://solscan.io",
+                referer: "https://solscan.io/",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            },
+        });
 
-        //  console.log("---".repeat(20));
+  
+
+        const body = await response.data;
+        // console.log(body);
+        console.log(pairAccount);
+
+        console.log(body.data.notifications)
+        console.log(body.data.parseData);
+
 
 
 
